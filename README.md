@@ -1,5 +1,5 @@
-# Sawtooth Cookie Jar
-Simple cookie jar example of a Sawtooth application.
+# Sawtooth SmartMed project
+A Sawtooth application as a consent management service.
 
 ## Introduction
 This is a minimal example of a Sawtooth 1.1 application,
