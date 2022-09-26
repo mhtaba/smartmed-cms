@@ -16,6 +16,7 @@
 smartmedClient class interfaces with Sawtooth through the REST API.
 It accepts input from a client CLI/GUI/BUI or other interface.
 '''
+# developed by MH
 
 from builtins import BaseException
 import hashlib
