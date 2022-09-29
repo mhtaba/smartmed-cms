@@ -21,9 +21,11 @@ to process.
 '''
 
 import argparse
+from datetime import date
 import logging
 import os
 import sys
+from time import time
 import traceback
 
 from colorlog import ColoredFormatter
@@ -74,6 +76,44 @@ def create_parser(prog_name):
     subparsers = parser.add_subparsers(title='subcommands', dest='command')
     subparsers.required = True
 
+    register_subparser = subparsers.add_parser('register',
+                                           help='populate the ledger with project ID and instances',
+                                           parents=[parent_parser])                                           
+    register_subparser.add_argument('projectID',
+                                type=str,
+                                help='the project ID has such a template: PR12345678')
+    register_subparser.add_argument('--feasibility',
+                               type=bool,
+                               help='is the project feasible?')
+    register_subparser.add_argument('--ethicality',
+                               type=bool,
+                               help='is the project ethical?')
+    register_subparser.add_argument('--approved_time',
+                               type=date,
+                               help='when the project is approved: yyyy-mm-dd')
+    register_subparser.add_argument('--validity_duration',
+                               type=date,
+                               help='one month after the approved time')
+    register_subparser.add_argument('--legal_base',
+                               type=int,
+                               help='consent:1, performance of a contract:2, legitimate interest:3, vital interest:4, legal requirement:5, public interest:6')                                                                                                            
+    register_subparser.add_argument('--DS_selection_criteria',
+                               type=str,
+                               help='one of these three options: red, green, blue')
+    register_subparser.add_argument('--project_issuer',
+                               type=str,
+                               help='username of the project issuer')
+
+    request_subparser = subparsers.add_parser('request',
+                                           help='ask to run a registered project by giving the projectID',
+                                           parents=[parent_parser])                                           
+    request_subparser.add_argument('projectID',
+                                type=str,
+                                help='the project ID has such a template: PR12345678')
+    request_subparser.add_argument('--username',
+                               type=str,
+                               help='username of the project requester which has to be same as the project issuer')                                                                                  
+
     find_subparser = subparsers.add_parser('find',
                                            help='find the list of DSs with color tag',
                                            parents=[parent_parser])                                           
@@ -111,6 +151,14 @@ def _get_private_keyfile(key_name):
     home = os.path.expanduser("~")
     key_dir = os.path.join(home, ".sawtooth", "keys")
     return '{}/{}.priv'.format(key_dir, key_name)
+
+def do_register(args):
+    '''Subcommand to populate the ledger with the projects. Calls client class to do the registering.'''
+    privkeyfile = _get_private_keyfile(args.username)
+    client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
+    response = client.register(args.projectID, args.feasibility, args.ethicality, args.approved_time, args.validity_duration,
+    args.legal_base, args.DS_selection_criteria, args.project_issuer)
+    print("Find Response: {}".format(response))    
 
 def do_find(args):
     '''Subcommand to find a list of DSs with associated color. Calls client class to do the finding.'''
