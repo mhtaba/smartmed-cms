@@ -83,19 +83,19 @@ def create_parser(prog_name):
                                 type=str,
                                 help='the project ID has such a template: PR12345678')
     register_subparser.add_argument('--feasibility',
-                               type=bool,
-                               help='is the project feasible?')
+                               type=str,
+                               help='is the project feasible? (true/false)')
     register_subparser.add_argument('--ethicality',
-                               type=bool,
-                               help='is the project ethical?')
+                               type=str,
+                               help='is the project ethical? (true/false)')
     register_subparser.add_argument('--approved_time',
-                               type=date,
-                               help='when the project is approved: yyyy-mm-dd')
+                               type=str,
+                               help='when the project is approved: dd.mm.yyyy')
     register_subparser.add_argument('--validity_duration',
-                               type=date,
-                               help='one month after the approved time')
+                               type=str,
+                               help='one month after the approved time: dd.mm.yyyy')
     register_subparser.add_argument('--legal_base',
-                               type=int,
+                               type=str,
                                help='consent:1, performance of a contract:2, legitimate interest:3, vital interest:4, legal requirement:5, public interest:6')                                                                                                            
     register_subparser.add_argument('--DS_selection_criteria',
                                type=str,
@@ -154,7 +154,7 @@ def _get_private_keyfile(key_name):
 
 def do_register(args):
     '''Subcommand to populate the ledger with the projects. Calls client class to do the registering.'''
-    privkeyfile = _get_private_keyfile(args.username)
+    privkeyfile = _get_private_keyfile(args.project_issuer)
     client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
     response = client.register(args.projectID, args.feasibility, args.ethicality, args.approved_time, args.validity_duration,
     args.legal_base, args.DS_selection_criteria, args.project_issuer)
@@ -219,7 +219,9 @@ def main(prog_name=os.path.basename(sys.argv[0]), args=None):
         setup_loggers(verbose_level=verbose_level)
 
         # Get the commands from cli args and call corresponding handlers
-        if args.command == 'find':
+        if args.command == 'register':
+            do_register(args)
+        elif args.command == 'find':
             do_find(args)
         elif args.command == 'interested':
             do_interested(args)

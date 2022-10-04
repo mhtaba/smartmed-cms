@@ -43,7 +43,7 @@ def _hash(data):
     '''Compute the SHA-512 hash and return the result as hex characters.'''
     return hashlib.sha512(data).hexdigest()
 
-def _get_smartmed_address(from_key,query):
+def _get_smartmed_address(from_key,projID):
     '''
     Return the address of a smartmed object from the smartmed TF.
 
@@ -51,7 +51,7 @@ def _get_smartmed_address(from_key,query):
     plus the result of the hash SHA-512(smartmed public key).
     '''
     return _hash(FAMILY_NAME.encode('utf-8'))[0:6] + \
-                 _hash(query.encode('utf-8'))[0:64]
+                 _hash(projID.encode('utf-8'))[0:64]
 
 
 class smartmedTransactionHandler(TransactionHandler):
@@ -96,7 +96,16 @@ class smartmedTransactionHandler(TransactionHandler):
         header = transaction.header
         payload_list = transaction.payload.decode().split(",")
         action = payload_list[0]
-        if action == "find":
+        if action == "register":
+            projectID = payload_list[1]
+            feasibility = payload_list[2]
+            ethicality = payload_list[3]
+            approved_time = payload_list[4]
+            validity_duration = payload_list[5]
+            legal_base = payload_list[6]
+            DS_selection_criteria = payload_list[7]
+            project_issuer = payload_list[8] 
+        elif action == "find":
             amount = payload_list[1]
             qid = payload_list[2]
         elif action == "interested":
@@ -115,7 +124,18 @@ class smartmedTransactionHandler(TransactionHandler):
         from_key = header.signer_public_key
 
         # Perform the action.
-        if action == "find":
+        if action == "register":
+            LOGGER.info("ProjectID = %s.", projectID)   
+            LOGGER.info("feasibility = %s.", feasibility)
+            LOGGER.info("ethicality = %s.", ethicality)
+            LOGGER.info("approved time= %s.", approved_time)
+            LOGGER.info("validity duration = %s.", validity_duration)
+            LOGGER.info("legal base = %s.", legal_base)
+            LOGGER.info("DS selection criteria = %s.", DS_selection_criteria)
+            LOGGER.info("project issuer = %s.", project_issuer)
+            self._make_register(context, projectID, feasibility, ethicality, approved_time, validity_duration,
+            legal_base, DS_selection_criteria, project_issuer, from_key)
+        elif action == "find":
             LOGGER.info("Amount = %s.", amount)   
             LOGGER.info("Query ID = %s.", qid)
             self._make_find(context, amount, qid, from_key)
@@ -134,6 +154,19 @@ class smartmedTransactionHandler(TransactionHandler):
             self._make_delete(context, qid, from_key)
         else:
             LOGGER.info("Unhandled action. Action should be bake or eat")
+
+    @classmethod
+    def _make_register(cls, context, projectID, feasibility, ethicality, approved_time, validity_duration,
+            legal_base, DS_selection_criteria, project_issuer, from_key):
+        '''populate the ledger with project ID and instances.'''
+        project_address = _get_smartmed_address(from_key,projectID)
+        LOGGER.info('Got the key %s and the project address %s.',
+                    from_key, project_address)
+        project = {}
+        project[projectID] = [feasibility,ethicality,approved_time,validity_duration,legal_base,
+        DS_selection_criteria,project_issuer,"n/a",["n/a","n/a","n/a","n/a","n/a"]]
+        state_data = str(project[projectID]).encode('utf-8')
+        addresses = context.set_state({project_address: state_data})
 
     @classmethod
     def _make_find(cls, context, amount, qid, from_key):

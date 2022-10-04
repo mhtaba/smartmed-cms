@@ -93,6 +93,12 @@ class smartmedClient(object):
     # 2. Create a transaction and a batch
     # 2. Send to REST API
 
+    def register(self, projectID, feasibility, ethicality, approved_time, validity_duration,
+    legal_base, DS_selection_criteria, project_issuer):
+        '''register projects in the ledger.'''
+        return self._wrap_and_send("register", projectID, feasibility, ethicality, approved_time, validity_duration, 
+        legal_base, DS_selection_criteria, project_issuer, wait=10)
+
     def find(self, color, qid):
         '''find associated DSs with the color tag.'''
         return self._wrap_and_send("find", color, qid, None, None, None, None, None, None, wait=10)
@@ -187,11 +193,14 @@ class smartmedClient(object):
         '''Create a transaction, then wrap it in a batch.
 
            Even single transactions must be wrapped into a batch.
-           Called by find(), interested(), and delete(). 
+           Called by register(), find(), interested(), and delete(). 
         '''
 
         # Generate a CSV UTF-8 encoded string as the payload.
-        if action == "find":
+        if action == "register":
+            raw_payload = ",".join([action, amount, qid, status, ds1, ds2, ds3, ds4, ds5])
+            address = self._get_address(amount)
+        elif action == "find":
             raw_payload = ",".join([action, amount, str(qid)])
             address = self._get_address(str(qid))
         elif action == "interested":    
