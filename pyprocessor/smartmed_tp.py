@@ -162,10 +162,9 @@ class smartmedTransactionHandler(TransactionHandler):
         project_address = _get_smartmed_address(from_key,projectID)
         LOGGER.info('Got the key %s and the project address %s.',
                     from_key, project_address)
-        project = {}
-        project[projectID] = [feasibility,ethicality,approved_time,validity_duration,legal_base,
+        project = [projectID,feasibility,ethicality,approved_time,validity_duration,legal_base,
         DS_selection_criteria,project_issuer,"n/a",["n/a","n/a","n/a","n/a","n/a"]]
-        state_data = str(project[projectID]).encode('utf-8')
+        state_data = str(project).encode('utf-8')
         addresses = context.set_state({project_address: state_data})
 
     @classmethod
