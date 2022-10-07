@@ -118,7 +118,7 @@ class smartmedTransactionHandler(TransactionHandler):
             ds4 = payload_list[7]
             ds5 = payload_list[8]
         elif action == "delete":
-            qid = payload_list[1]
+            projectID = payload_list[1]
 
         # Get the signer's public key, sent in the header from the client.
         from_key = header.signer_public_key
@@ -150,8 +150,8 @@ class smartmedTransactionHandler(TransactionHandler):
             LOGGER.info("ds5 = %s.", ds5)
             self._make_interested(context, username, qid, status, ds1, ds2, ds3, ds4, ds5, from_key)            
         elif action == "delete":
-            LOGGER.info("Query ID = %s.", qid)
-            self._make_delete(context, qid, from_key)
+            LOGGER.info("Query ID = %s.", projectID)
+            self._make_delete(context, projectID, from_key)
         else:
             LOGGER.info("Unhandled action. Action should be bake or eat")
 
@@ -240,8 +240,8 @@ class smartmedTransactionHandler(TransactionHandler):
             attributes=[("cookies-baked", username)])    
 
     @classmethod
-    def _make_delete(cls, context, qid, from_key):
-        query_address = _get_smartmed_address(from_key,qid)
+    def _make_delete(cls, context, projectID, from_key):
+        query_address = _get_smartmed_address(from_key,projectID)
         LOGGER.info('Got the key %s and the query address %s.',
                     from_key, query_address)
         context.delete_state([query_address])    

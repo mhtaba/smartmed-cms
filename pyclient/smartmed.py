@@ -139,11 +139,11 @@ def create_parser(prog_name):
                                 type=str,
                                 help='yes/no response from the DS')
     delete_subparser = subparsers.add_parser('delete',
-                                          help='delete a registered query',
+                                          help='delete a registered project',
                                           parents=[parent_parser])
-    delete_subparser.add_argument('qid',
+    delete_subparser.add_argument('projectID',
                                type=int,
-                               help='Query ID of the one that is going to be deleted')                                                                                                                                                                                                                                      			  
+                               help='Project ID of the one that is going to be deleted')                                                                                                                                                                                                                                      			  
     return parser
 
 def _get_private_keyfile(key_name):
@@ -210,7 +210,7 @@ def do_delete(args):
     '''Subcommand to delete a query.  Calls client class to do the deleting.'''
     privkeyfile = _get_private_keyfile(KEY_NAME)
     client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
-    response = client.delete(args.qid)
+    response = client.delete(args.projectID)
     print("delete Response: {}".format(response))    
 
 

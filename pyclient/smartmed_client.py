@@ -103,7 +103,7 @@ class smartmedClient(object):
         '''find associated DSs with the color tag.'''
         return self._wrap_and_send("find", color, qid, None, None, None, None, None, None, wait=10)
 
-    def delete(self, qid):
+    def delete(self, projectID):
         '''delete a registered query.'''
         return self._wrap_and_send("delete", None, qid, None, None, None, None, None, None, wait=10)
 
