@@ -189,10 +189,10 @@ def do_list():
     if query_list is not None:
         count = 0;
         for tx_data in query_list:
-            count = count + 1;
+            count = count + 1
     #        qid, ds1, ds2, ds3, ds4, ds5 = tx_data
             projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
-                DS_selection_criteria,project_issuer,HD_trasfer_proof,consent_reply = tx_data   
+                DS_selection_criteria,project_issuer,HD_trasfer_proof,*consent_reply = tx_data
             print(count, ") Project ID:"+ projectID, \
                 "| Feasibility:"+ feasibility, \
                 "| Ethicality:"+ ethicality, \
@@ -200,9 +200,9 @@ def do_list():
                 "| Validity duration:"+ validity_duration, \
                 "| Legal base:"+ legal_base, \
                 "| DS selection criteria:"+ DS_selection_criteria, \
-                "| Project issuer:"+ project_issuer, \    
+                "| Project issuer:"+ project_issuer, \
                 "| HD transfer proof:"+ HD_trasfer_proof, \
-                "| Consent reply:"+ consent_reply            )
+                "| Consent reply:"+ str(consent_reply)            )
     else:
         raise Exception("Transaction data not found")            
 
