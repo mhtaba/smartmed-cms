@@ -162,6 +162,18 @@ class smartmedTransactionHandler(TransactionHandler):
         project_address = _get_smartmed_address(from_key,projectID)
         LOGGER.info('Got the key %s and the project address %s.',
                     from_key, project_address)
+        if legal_base == "1":
+            legal_base = "consent"
+        elif legal_base == "2":
+            legal_base = "performance of interest"
+        elif legal_base == "3":
+            legal_base = "legitimate interest"
+        elif legal_base == "4":
+            legal_base = "vital interest"
+        elif legal_base == "5":
+            legal_base = "legal reguirement"
+        elif legal_base == "6":
+            legal_base = "public interest"                         
         project = [projectID,feasibility,ethicality,approved_time,validity_duration,legal_base,
         DS_selection_criteria,project_issuer,"n/a",["n/a","n/a","n/a","n/a","n/a"]]
         state_data = str(project).encode('utf-8')
