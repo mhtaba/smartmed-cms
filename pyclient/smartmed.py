@@ -202,7 +202,7 @@ def do_list():
                 "| DS selection criteria:"+ DS_selection_criteria, \
                 "| Project issuer:"+ project_issuer, \
                 "| HD transfer proof:"+ HD_trasfer_proof, \
-                "| Consent reply:"+ str(consent_reply)            )
+                "| Consent reply:"+ str(consent_reply)     )
     else:
         raise Exception("Transaction data not found")            
 

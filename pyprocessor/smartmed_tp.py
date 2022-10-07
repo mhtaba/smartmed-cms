@@ -175,7 +175,7 @@ class smartmedTransactionHandler(TransactionHandler):
         elif legal_base == "6":
             legal_base = "public interest"                         
         project = [projectID,feasibility,ethicality,approved_time,validity_duration,legal_base,
-        DS_selection_criteria,project_issuer,"n/a",["n/a","n/a","n/a","n/a","n/a"]]
+        DS_selection_criteria,project_issuer,"n/a",{}]
         state_data = str(project).encode('utf-8')
         addresses = context.set_state({project_address: state_data})
 
