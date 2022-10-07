@@ -104,7 +104,10 @@ class smartmedTransactionHandler(TransactionHandler):
             validity_duration = payload_list[5]
             legal_base = payload_list[6]
             DS_selection_criteria = payload_list[7]
-            project_issuer = payload_list[8] 
+            project_issuer = payload_list[8]
+        elif action == "request":
+            projectID = payload_list[1]
+            username = payload_list[2]     
         elif action == "find":
             amount = payload_list[1]
             qid = payload_list[2]
@@ -135,6 +138,10 @@ class smartmedTransactionHandler(TransactionHandler):
             LOGGER.info("project issuer = %s.", project_issuer)
             self._make_register(context, projectID, feasibility, ethicality, approved_time, validity_duration,
             legal_base, DS_selection_criteria, project_issuer, from_key)
+        elif action == "request":
+            LOGGER.info("ProjectID = %s.", projectID)   
+            LOGGER.info("username = %s.", username)
+            self._make_request(context, projectID, username, from_key)    
         elif action == "find":
             LOGGER.info("Amount = %s.", amount)   
             LOGGER.info("Query ID = %s.", qid)
@@ -178,6 +185,13 @@ class smartmedTransactionHandler(TransactionHandler):
         DS_selection_criteria,project_issuer,"n/a",{}]
         state_data = str(project).encode('utf-8')
         addresses = context.set_state({project_address: state_data})
+
+    @classmethod
+    def _make_request(cls, context, projectID, username, from_key):
+        '''find associated DSs to the project.'''
+        query_address = _get_smartmed_address(from_key,projectID)
+        LOGGER.info('Got the key %s and the query address %s.',
+                    from_key, query_address)
 
     @classmethod
     def _make_find(cls, context, amount, qid, from_key):

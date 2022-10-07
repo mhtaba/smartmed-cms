@@ -46,7 +46,7 @@ def _hash(data):
 class smartmedClient(object):
     '''Client smartmed class
 
-    Supports "find", "list", "delete", and "interested" functions.
+    Supports "register", "request", "find", "list", "delete", and "interested" functions.
     '''
 
     def __init__(self, base_url, key_file=None):
@@ -99,13 +99,17 @@ class smartmedClient(object):
         return self._wrap_and_send("register", projectID, feasibility, ethicality, approved_time, validity_duration, 
         legal_base, DS_selection_criteria, project_issuer, wait=10)
 
+    def request(self, projectID, username):
+        '''request a project from the ledger.'''
+        return self._wrap_and_send("request", projectID, username, None, None, None, None, None, None, wait=10)
+
     def find(self, color, qid):
         '''find associated DSs with the color tag.'''
         return self._wrap_and_send("find", color, qid, None, None, None, None, None, None, wait=10)
 
     def delete(self, projectID):
         '''delete a registered query.'''
-        return self._wrap_and_send("delete", None, qid, None, None, None, None, None, None, wait=10)
+        return self._wrap_and_send("delete", None, projectID, None, None, None, None, None, None, wait=10)
 
     def get_query(self, qid):
         '''Get a query registered in the ledger by its ID'''
@@ -200,6 +204,8 @@ class smartmedClient(object):
         if action == "register":
             raw_payload = ",".join([action, amount, qid, status, ds1, ds2, ds3, ds4, ds5])
             address = self._get_address(amount)
+        elif action == "request":
+            raw_payload = ",".join([action, amount, qid])    
         elif action == "find":
             raw_payload = ",".join([action, amount, str(qid)])
             address = self._get_address(str(qid))
