@@ -196,6 +196,7 @@ class smartmedTransactionHandler(TransactionHandler):
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
         DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply \
              = state_entries[0].data.decode().split(',')
+        LOGGER.info("project issuer = %s.", project_issuer)     
         if username == project_issuer:
             consent_reply = []
             fr = open("./pyprocessor/dslist.txt","r")
@@ -209,7 +210,7 @@ class smartmedTransactionHandler(TransactionHandler):
             state_data = str(query_result).encode('utf-8')
             addresses = context.set_state({query_address: state_data})
         else:
-            raise InternalError("User Error")
+            raise InternalError("Username Error")
 
         if len(addresses) < 1:
             raise InternalError("State Error")    
