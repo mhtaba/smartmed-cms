@@ -192,6 +192,28 @@ class smartmedTransactionHandler(TransactionHandler):
         query_address = _get_smartmed_address(from_key,projectID)
         LOGGER.info('Got the key %s and the query address %s.',
                     from_key, query_address)
+        state_entries = context.get_state([query_address])
+        projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
+        DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply \
+             = state_entries[0].data.decode().split(',')
+        if username == project_issuer:
+            consent_reply = []
+            fr = open("./pyprocessor/dslist.txt","r")
+            lines = fr.readlines()
+            for line in lines:
+                data = line.strip().split(",")
+                if data[1].casefold() == DS_selection_criteria:
+                    consent_reply.append(data[1])
+            query_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
+                DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply
+            state_data = str(query_result).encode('utf-8')
+            addresses = context.set_state({query_address: state_data})
+        else:
+            raise InternalError("User Error")
+
+        if len(addresses) < 1:
+            raise InternalError("State Error")    
+
 
     @classmethod
     def _make_find(cls, context, amount, qid, from_key):
