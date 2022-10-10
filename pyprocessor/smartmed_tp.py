@@ -196,8 +196,8 @@ class smartmedTransactionHandler(TransactionHandler):
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
         DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply \
              = state_entries[0].data.decode().split(',')
-        LOGGER.info("project issuer = %s.", project_issuer)     
-        if username == project_issuer:
+        LOGGER.info("project issuer = %s.", project_issuer.strip("'"))     
+        if username == project_issuer.strip("'"):
             consent_reply = []
             fr = open("./pyprocessor/dslist.txt","r")
             lines = fr.readlines()

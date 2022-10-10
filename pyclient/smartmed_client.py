@@ -205,7 +205,8 @@ class smartmedClient(object):
             raw_payload = ",".join([action, amount, qid, status, ds1, ds2, ds3, ds4, ds5])
             address = self._get_address(amount)
         elif action == "request":
-            raw_payload = ",".join([action, amount, qid])    
+            raw_payload = ",".join([action, amount, qid])
+            address = self._get_address(str(amount))    
         elif action == "find":
             raw_payload = ",".join([action, amount, str(qid)])
             address = self._get_address(str(qid))
