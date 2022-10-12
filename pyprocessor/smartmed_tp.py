@@ -200,7 +200,7 @@ class smartmedTransactionHandler(TransactionHandler):
         LOGGER.info("project issuer = %s.", project_issuer.replace("'","").strip())    
         if username == project_issuer.replace("'","").strip():
             consent_reply = []
-            fr = open(Path("dslist.txt"),"r")
+            fr = open("/home/azure-dlt-node1/CRN-demo/smartmed-cms/pyprocessor/dslist.txt","r")
             lines = fr.readlines()
             for line in lines:
                 data = line.strip().split(",")
