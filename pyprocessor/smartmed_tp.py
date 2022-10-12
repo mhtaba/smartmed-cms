@@ -28,7 +28,7 @@ from sawtooth_sdk.processor.handler import TransactionHandler
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from sawtooth_sdk.processor.exceptions import InternalError
 from sawtooth_sdk.processor.core import TransactionProcessor
-from pathlib import Path, path
+from pathlib import Path
 
 # hard-coded for simplicity (otherwise get the URL from the args in main):
 DEFAULT_URL = 'tcp://localhost:4004'
