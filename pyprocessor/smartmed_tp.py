@@ -199,12 +199,13 @@ class smartmedTransactionHandler(TransactionHandler):
         LOGGER.info("project issuer = %s.", project_issuer.replace("'","").strip())    
         if username == project_issuer.replace("'","").strip():
             consent_reply = []
-            fr = open("./dslist.txt","r")
+            fr = open("./pyprocessor/dslist.txt","r")
             lines = fr.readlines()
             for line in lines:
                 data = line.strip().split(",")
                 if data[1].casefold() == DS_selection_criteria.replace("'","").strip():
                     consent_reply.append(data[1])
+            fr.close()        
             query_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
                 DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply
             state_data = str(query_result).encode('utf-8')
