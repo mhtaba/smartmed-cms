@@ -103,6 +103,10 @@ class smartmedClient(object):
         '''request a project from the ledger.'''
         return self._wrap_and_send("request", projectID, username, None, None, None, None, None, None, wait=10)
 
+    def reply(self, projectID, username):
+        '''replying to consent.'''
+        return self._wrap_and_send("reply", projectID, username, None, None, None, None, None, None, wait=10)
+
     def find(self, color, qid):
         '''find associated DSs with the color tag.'''
         return self._wrap_and_send("find", color, qid, None, None, None, None, None, None, wait=10)
@@ -144,7 +148,7 @@ class smartmedClient(object):
         '''Send a REST command to the Validator via the REST API.
 
            Called by list() &  _wrap_and_send().
-           The latter caller is made on the behalf of find(), interested(), and delete() .
+           The latter caller is made on the behalf of register(), request(), reply(), and delete() .
         '''
         url = "{}/{}".format(self._base_url, suffix)
         print("URL to send to REST API is {}".format(url))
@@ -206,7 +210,10 @@ class smartmedClient(object):
             address = self._get_address(amount)
         elif action == "request":
             raw_payload = ",".join([action, amount, qid])
-            address = self._get_address(str(amount))    
+            address = self._get_address(str(amount))
+        elif action == "reply":
+            raw_payload = ",".join([action, amount, qid])
+            address = self._get_address(str(amount))        
         elif action == "find":
             raw_payload = ",".join([action, amount, str(qid)])
             address = self._get_address(str(qid))

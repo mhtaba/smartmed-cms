@@ -114,6 +114,16 @@ def create_parser(prog_name):
                                type=str,
                                help='username of the project requester which has to be same as the project issuer')                                                                                  
 
+    reply_subparser = subparsers.add_parser('reply',
+                                           help='replying to consent',
+                                           parents=[parent_parser])                                           
+    reply_subparser.add_argument('projectID',
+                                type=str,
+                                help='the project ID has such a template: PR12345678')
+    reply_subparser.add_argument('--username',
+                               type=str,
+                               help='username of the DS')
+
     find_subparser = subparsers.add_parser('find',
                                            help='find the list of DSs with color tag',
                                            parents=[parent_parser])                                           
@@ -143,17 +153,7 @@ def create_parser(prog_name):
                                           parents=[parent_parser])
     delete_subparser.add_argument('projectID',
                                type=str,
-                               help='Project ID of the one that is going to be deleted')
-    request_subparser = subparsers.add_parser('request',
-                                          help='request a registered project',
-                                          parents=[parent_parser])
-    request_subparser.add_argument('projectID',
-                               type=str,
-                               help='Project ID of the one that is going to be requested')
-    request_subparser.add_argument('--username',
-                               type=str,
-                               help='username of the one that is going to request a project. \
-                                Only the DP who issued the project should be able to request the project')                           
+                               help='Project ID of the one that is going to be deleted')                           
 
     return parser
 
@@ -176,7 +176,14 @@ def do_request(args):
     privkeyfile = _get_private_keyfile(args.username)
     client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
     response = client.request(args.projectID, args.username)
-    print("Find Response: {}".format(response))       
+    print("Find Response: {}".format(response))
+
+def do_reply(args):
+    '''Subcommand to replying to consent. Calls client class to do the replying.'''
+    privkeyfile = _get_private_keyfile(args.username)
+    client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
+    response = client.reply(args.projectID, args.username)
+    print("Find Response: {}".format(response))            
 
 def do_find(args):
     '''Subcommand to find a list of DSs with associated color. Calls client class to do the finding.'''
@@ -246,7 +253,9 @@ def main(prog_name=os.path.basename(sys.argv[0]), args=None):
         if args.command == 'register':
             do_register(args)
         elif args.command == 'request':
-            do_request(args)    
+            do_request(args)
+        elif args.command == 'reply':
+            do_reply(args)        
         elif args.command == 'find':
             do_find(args)
         elif args.command == 'interested':

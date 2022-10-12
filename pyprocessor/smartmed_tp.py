@@ -108,7 +108,10 @@ class smartmedTransactionHandler(TransactionHandler):
             project_issuer = payload_list[8]
         elif action == "request":
             projectID = payload_list[1]
-            username = payload_list[2]     
+            username = payload_list[2]
+        elif action == "reply":
+            projectID = payload_list[1]
+            username = payload_list[2]         
         elif action == "find":
             amount = payload_list[1]
             qid = payload_list[2]
@@ -142,7 +145,11 @@ class smartmedTransactionHandler(TransactionHandler):
         elif action == "request":
             LOGGER.info("ProjectID = %s.", projectID)   
             LOGGER.info("username = %s.", username)
-            self._make_request(context, projectID, username, from_key)    
+            self._make_request(context, projectID, username, from_key)
+        elif action == "reply":
+            LOGGER.info("ProjectID = %s.", projectID)   
+            LOGGER.info("username = %s.", username)
+            self._make_reply(context, projectID, username, from_key)        
         elif action == "find":
             LOGGER.info("Amount = %s.", amount)   
             LOGGER.info("Query ID = %s.", qid)
@@ -199,13 +206,13 @@ class smartmedTransactionHandler(TransactionHandler):
              = state_entries[0].data.decode().split(',')
         LOGGER.info("project issuer = %s.", project_issuer.replace("'","").strip())    
         if username == project_issuer.replace("'","").strip():
-            consent_reply = {}
+            consent_reply = []
             fr = open("/home/azure-dlt-node1/CRN-demo/smartmed-cms/pyprocessor/dslist.txt","r")
             lines = fr.readlines()
             for line in lines:
                 data = line.strip().split(",")
                 if data[1].casefold() == DS_selection_criteria.replace("'","").strip():
-                    consent_reply[data[0]] = "no response"
+                    consent_reply.append(data[0])
             fr.close()        
             query_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
                 DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply
@@ -215,7 +222,23 @@ class smartmedTransactionHandler(TransactionHandler):
             raise InternalError("Username Error")
 
         if len(addresses) < 1:
-            raise InternalError("State Error")    
+            raise InternalError("State Error")
+
+    @classmethod
+    def _make_reply(cls, context, projectID, username, from_key):
+        '''replying to consent.'''
+        query_address = _get_smartmed_address(from_key,projectID)
+        LOGGER.info('Got the key %s and the query address %s.',
+                    from_key, query_address)
+        state_entries = context.get_state([query_address])
+        projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
+        DS_selection_criteria,project_issuer,HD_transfer_proof,*consents \
+             = state_entries[0].data.decode().split(',')
+        LOGGER.info("project issuer = %s.", project_issuer.replace("'","").strip())    
+        if username == project_issuer.replace("'","").strip():
+            consent_reply = {}
+        else:
+            raise InternalError("Username Error")            
 
 
     @classmethod
