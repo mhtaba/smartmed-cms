@@ -111,7 +111,8 @@ class smartmedTransactionHandler(TransactionHandler):
             username = payload_list[2]
         elif action == "reply":
             projectID = payload_list[1]
-            username = payload_list[2]         
+            username = payload_list[2]
+            consent = payload_list[3]         
         elif action == "find":
             amount = payload_list[1]
             qid = payload_list[2]
@@ -149,7 +150,8 @@ class smartmedTransactionHandler(TransactionHandler):
         elif action == "reply":
             LOGGER.info("ProjectID = %s.", projectID)   
             LOGGER.info("username = %s.", username)
-            self._make_reply(context, projectID, username, from_key)        
+            LOGGER.info("username = %s.", consent)
+            self._make_reply(context, projectID, username, consent, from_key)        
         elif action == "find":
             LOGGER.info("Amount = %s.", amount)   
             LOGGER.info("Query ID = %s.", qid)
@@ -206,13 +208,13 @@ class smartmedTransactionHandler(TransactionHandler):
              = state_entries[0].data.decode().split(',')
         LOGGER.info("project issuer = %s.", project_issuer.replace("'","").strip())    
         if username == project_issuer.replace("'","").strip():
-            consent_reply = []
+            consent_reply = {}
             fr = open("/home/azure-dlt-node1/CRN-demo/smartmed-cms/pyprocessor/dslist.txt","r")
             lines = fr.readlines()
             for line in lines:
                 data = line.strip().split(",")
                 if data[1].casefold() == DS_selection_criteria.replace("'","").strip():
-                    consent_reply.append(data[0])
+                    consent_reply [data[0]] = "no response"
             fr.close()        
             query_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
                 DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply
@@ -225,20 +227,21 @@ class smartmedTransactionHandler(TransactionHandler):
             raise InternalError("State Error")
 
     @classmethod
-    def _make_reply(cls, context, projectID, username, from_key):
+    def _make_reply(cls, context, projectID, username, consent, from_key):
         '''replying to consent.'''
         query_address = _get_smartmed_address(from_key,projectID)
         LOGGER.info('Got the key %s and the query address %s.',
                     from_key, query_address)
         state_entries = context.get_state([query_address])
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
-        DS_selection_criteria,project_issuer,HD_transfer_proof,*consents \
+        DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
              = state_entries[0].data.decode().split(',')
-        LOGGER.info("project issuer = %s.", project_issuer.replace("'","").strip())    
-        if username == project_issuer.replace("'","").strip():
-            consent_reply = {}
-        else:
-            raise InternalError("Username Error")            
+        consent_reply = {}     
+        for DS in DSs:
+            consent_reply [DS] = "no response"
+            LOGGER.info("DS = %s.", DS.replace("'","").strip())            
+            if username == DS.replace("'","").strip():
+                consent_reply[DS] = consent                
 
 
     @classmethod

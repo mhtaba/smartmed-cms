@@ -103,9 +103,9 @@ class smartmedClient(object):
         '''request a project from the ledger.'''
         return self._wrap_and_send("request", projectID, username, None, None, None, None, None, None, wait=10)
 
-    def reply(self, projectID, username):
+    def reply(self, projectID, username, consent):
         '''replying to consent.'''
-        return self._wrap_and_send("reply", projectID, username, None, None, None, None, None, None, wait=10)
+        return self._wrap_and_send("reply", projectID, username, consent, None, None, None, None, None, wait=10)
 
     def find(self, color, qid):
         '''find associated DSs with the color tag.'''
@@ -212,7 +212,7 @@ class smartmedClient(object):
             raw_payload = ",".join([action, amount, qid])
             address = self._get_address(str(amount))
         elif action == "reply":
-            raw_payload = ",".join([action, amount, qid])
+            raw_payload = ",".join([action, amount, qid, status])
             address = self._get_address(str(amount))        
         elif action == "find":
             raw_payload = ",".join([action, amount, str(qid)])

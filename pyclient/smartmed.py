@@ -123,6 +123,9 @@ def create_parser(prog_name):
     reply_subparser.add_argument('--username',
                                type=str,
                                help='username of the DS')
+    reply_subparser.add_argument('consent',
+                               type=str,
+                               help='yes/no')
 
     find_subparser = subparsers.add_parser('find',
                                            help='find the list of DSs with color tag',
@@ -182,7 +185,7 @@ def do_reply(args):
     '''Subcommand to replying to consent. Calls client class to do the replying.'''
     privkeyfile = _get_private_keyfile(args.username)
     client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
-    response = client.reply(args.projectID, args.username)
+    response = client.reply(args.projectID, args.username, args.consent)
     print("Find Response: {}".format(response))            
 
 def do_find(args):
