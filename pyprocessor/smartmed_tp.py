@@ -210,13 +210,13 @@ class smartmedTransactionHandler(TransactionHandler):
              = state_entries[0].data.decode().split(',')
         LOGGER.info("project issuer = %s.", project_issuer.replace("'","").strip())    
         if username == project_issuer.replace("'","").strip():
-            consent_reply = {}
+            consent_reply = []
             fr = open("/home/azure-dlt-node1/CRN-demo/smartmed-cms/pyprocessor/dslist.txt","r")
             lines = fr.readlines()
             for line in lines:
                 data = line.strip().split(",")
                 if data[1].casefold() == DS_selection_criteria.replace("'","").strip():
-                    consent_reply [data[0]] = "no response"
+                    consent_reply.append(data[0])
             fr.close()        
             query_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
                 DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply
@@ -238,17 +238,13 @@ class smartmedTransactionHandler(TransactionHandler):
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
         DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
              = state_entries[0].data.decode().split(',')
-        consent_reply = {}
-        for i in DSs:
-            consent_reply.update(i)
-    #   consent_reply = json.loads(str(DSs))
-        LOGGER.info("consent reply dict= %s.", consent_reply)
-        if username in consent_reply:
-            consent_reply[username] = consent
+        LOGGER.info("consents= %s.", DSs)     
+        if username in DSs:
+            DSs[DSs.index(username)] = username+consent    
         else:
             raise InternalError("Username Error")    
         reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
-                DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply
+                DS_selection_criteria,project_issuer,HD_transfer_proof,DSs
         state_data = str(reply_result).encode('utf-8')
         addresses = context.set_state({query_address: state_data})
 
