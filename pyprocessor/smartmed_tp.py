@@ -30,6 +30,7 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from sawtooth_sdk.processor.exceptions import InternalError
 from sawtooth_sdk.processor.core import TransactionProcessor
 from pathlib import Path
+from collections import ChainMap
 
 # hard-coded for simplicity (otherwise get the URL from the args in main):
 DEFAULT_URL = 'tcp://localhost:4004'
@@ -151,7 +152,7 @@ class smartmedTransactionHandler(TransactionHandler):
         elif action == "reply":
             LOGGER.info("ProjectID = %s.", projectID)   
             LOGGER.info("username = %s.", username)
-            LOGGER.info("username = %s.", consent)
+            LOGGER.info("consent = %s.", consent)
             self._make_reply(context, projectID, username, consent, from_key)        
         elif action == "find":
             LOGGER.info("Amount = %s.", amount)   
@@ -235,9 +236,10 @@ class smartmedTransactionHandler(TransactionHandler):
                     from_key, query_address)
         state_entries = context.get_state([query_address])
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
-        DS_selection_criteria,project_issuer,HD_transfer_proof,DSs \
+        DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
              = state_entries[0].data.decode().split(',')
-        consent_reply = json.loads(DSs)
+        consent_reply = dict(ChainMap(*DSs))
+    #    consent_reply = json.loads(str(DSs))
         LOGGER.info("consent reply dict= %s.", consent_reply)
         if username in consent_reply:
             consent_reply[username] = consent
