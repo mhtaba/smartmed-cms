@@ -23,6 +23,7 @@ import logging
 import random
 import string
 import os.path
+import json
 
 from sawtooth_sdk.processor.handler import TransactionHandler
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
@@ -234,15 +235,21 @@ class smartmedTransactionHandler(TransactionHandler):
                     from_key, query_address)
         state_entries = context.get_state([query_address])
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
-        DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
+        DS_selection_criteria,project_issuer,HD_transfer_proof,DSs \
              = state_entries[0].data.decode().split(',')
-        consent_reply = {}     
-        for DS in DSs:
-            consent_reply [DS] = "no response"
-            LOGGER.info("DS = %s.", DS.replace("'","").strip())            
-            if username == DS.replace("'","").strip():
-                consent_reply[DS] = consent                
+        consent_reply = json.loads(DSs)
+        LOGGER.info("consent reply dict= %s.", consent_reply)
+        if username in consent_reply:
+            consent_reply[username] = consent
+        else:
+            raise InternalError("Username Error")    
+        reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
+                DS_selection_criteria,project_issuer,HD_transfer_proof,consent_reply
+        state_data = str(reply_result).encode('utf-8')
+        addresses = context.set_state({query_address: state_data})
 
+        if len(addresses) < 1:
+            raise InternalError("State Error")
 
     @classmethod
     def _make_find(cls, context, amount, qid, from_key):
