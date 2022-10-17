@@ -238,7 +238,7 @@ class smartmedTransactionHandler(TransactionHandler):
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
         DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
              = state_entries[0].data.decode().split(',')
-        consent_reply = dict(ChainMap(*DSs))
+        consent_reply = {k:v for e in DSs for (k,v) in e.items()}
     #    consent_reply = json.loads(str(DSs))
         LOGGER.info("consent reply dict= %s.", consent_reply)
         if username in consent_reply:
