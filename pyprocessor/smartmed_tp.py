@@ -238,16 +238,13 @@ class smartmedTransactionHandler(TransactionHandler):
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
         DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
              = state_entries[0].data.decode().split(',')
-        LOGGER.info("consents= %s.", DSs)
         DS_found = False
         count = -1
         for ds in DSs:
             count = count + 1
             if ds.find(username) != -1:
                 DS_found = True
-                LOGGER.info("ds= %s.", ds)     
                 DSs[count] = username+consent
-                LOGGER.info("consent item= %s.", DSs[DSs.index(username)])    
         if DS_found == False:
             raise InternalError("Username Error")    
         reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
