@@ -242,8 +242,9 @@ class smartmedTransactionHandler(TransactionHandler):
         DS_found = False
         for ds in DSs:
             if ds.find(username) != -1:
-                DS_found = True     
-                DSs[DSs.index(username)] = username+consent
+                DS_found = True
+                LOGGER.info("ds= %s.", ds)     
+                DSs[ds] = username+consent
                 LOGGER.info("consent item= %s.", DSs[DSs.index(username)])    
         if DS_found == False:
             raise InternalError("Username Error")    
