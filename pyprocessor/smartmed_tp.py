@@ -244,7 +244,7 @@ class smartmedTransactionHandler(TransactionHandler):
             count = count + 1
             if ds.find(username) != -1:
                 DS_found = True
-                DSs[count] = username+consent
+                DSs[count] = {username:consent}
         if DS_found == False:
             raise InternalError("Username Error")    
         reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
