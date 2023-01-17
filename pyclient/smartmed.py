@@ -156,7 +156,11 @@ def create_parser(prog_name):
                                           parents=[parent_parser])
     delete_subparser.add_argument('projectID',
                                type=str,
-                               help='Project ID of the one that is going to be deleted')                           
+                               help='Project ID of the one that is going to be deleted')
+    file_subparser = subparsers.add_parser('file',help='Swithching to the file execution mode', parents=[parent_parser])
+    file_subparser.add_argument('filepath',
+                               type=str,
+                               help='Path to the file to be executed')
 
     return parser
 
@@ -239,7 +243,40 @@ def do_delete(args):
     privkeyfile = _get_private_keyfile(KEY_NAME)
     client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
     response = client.delete(args.projectID)
-    print("delete Response: {}".format(response))    
+    print("delete Response: {}".format(response))
+
+def read_from_file(args):
+    command_file = open(args.filepath, 'r')
+    while True:
+        # Get next line from file
+        line = command_file.readline()
+        if not line:
+            break
+        line_args = line.split()
+        parser = create_parser(os.path.basename(sys.argv[0]))
+        line_args = parser.parse_args(line_args)
+        function_dispatcher(line_args)
+    command_file.close()
+
+def function_dispatcher(args):
+    if args.command == 'register':
+        do_register(args)
+    elif args.command == 'request':
+        do_request(args)
+    elif args.command == 'reply':
+        do_reply(args)        
+    elif args.command == 'find':
+        do_find(args)
+    elif args.command == 'interested':
+        do_interested(args)
+    elif args.command == 'delete':
+        do_delete(args)        
+    elif args.command == 'list':
+        do_list()
+    elif args.command == 'file':
+        read_from_file(args)                   	
+    else:
+        raise Exception("Invalid command: {}".format(args.command))
 
 
 def main(prog_name=os.path.basename(sys.argv[0]), args=None):
@@ -251,24 +288,7 @@ def main(prog_name=os.path.basename(sys.argv[0]), args=None):
         args = parser.parse_args(args)
         verbose_level = 0
         setup_loggers(verbose_level=verbose_level)
-
-        # Get the commands from cli args and call corresponding handlers
-        if args.command == 'register':
-            do_register(args)
-        elif args.command == 'request':
-            do_request(args)
-        elif args.command == 'reply':
-            do_reply(args)        
-        elif args.command == 'find':
-            do_find(args)
-        elif args.command == 'interested':
-            do_interested(args)
-        elif args.command == 'delete':
-            do_delete(args)        
-        elif args.command == 'list':
-            do_list()                   	
-        else:
-            raise Exception("Invalid command: {}".format(args.command))
+        function_dispatcher(args)
 
     except KeyboardInterrupt:
         pass

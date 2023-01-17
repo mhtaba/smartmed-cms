@@ -1,4 +1,3 @@
 PR12345678 --feasibility true --ethicality true --approved_time 01.11.2022 --validity_duration 01.12.2022 --legal_base 1 --DS_selection_criteria green --project_issuer mh
-PR87654321 --feasibility true --ethicality true --approved_time 02.11.2022 --validity_duration 02.12.2022 --legal_base 1 --DS_selection_criteria red --project_issuer mh
+PR87654321 --feasibility true --ethicality true --approved_time 02.11.2022 --validity_duration 02.12.2022 --legal_base 1 --DS_selection_criteria red --project_issuer salar
 PR01010101 --feasibility true --ethicality true --approved_time 03.11.2022 --validity_duration 03.12.2022 --legal_base 1 --DS_selection_criteria blue --project_issuer mh
- 
