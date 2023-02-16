@@ -37,6 +37,8 @@ from smartmed_client import smartmedClient
 
 KEY_NAME = 'mysmartmed'
 
+out_time = datetime.datetime.now()
+
 # hard-coded for simplicity (otherwise get the URL from the args in main):
 DEFAULT_URL = 'http://localhost:8008'
 # For Docker:
@@ -189,7 +191,8 @@ def do_register(args):
     client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
     response = client.register(args.projectID, args.feasibility, args.ethicality, args.approved_time, args.validity_duration,
     args.legal_base, args.DS_selection_criteria, args.project_issuer)
-    print("Find Response: {}".format(response)) 
+    print("Find Response: {}".format(response))
+    out_throughput()
 
 def do_request(args):
     '''Subcommand to request a project based on projectID. Calls client class to do the requesting.'''
@@ -308,6 +311,14 @@ def auto_run():
 
         time.sleep((time_interval - time_difference.microseconds)/micro_conversion)
 
+def out_throughput():
+    global out_time
+    time = datetime.datetime.now()
+    delta = time - out_time
+    out_time = time
+    print("Time interval between two commited transactions are:")
+    print(delta.seconds)
+    print("Equivalent to: " + str(1.0/delta.seconds) + " TPS")
     
 
 def function_dispatcher(args):
