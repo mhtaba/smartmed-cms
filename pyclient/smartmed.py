@@ -25,8 +25,12 @@ from datetime import date
 import logging
 import os
 import sys
-from time import time
+
 import traceback
+import random
+import time
+import datetime
+from multiprocessing import Process
 
 from colorlog import ColoredFormatter
 from smartmed_client import smartmedClient
@@ -151,6 +155,15 @@ def create_parser(prog_name):
     interested_subparser.add_argument('status',
                                 type=str,
                                 help='yes/no response from the DS')
+    
+    auto_subparser = subparsers.add_parser('auto_run',
+                                           help='To help run the system automatically',
+                                           parents=[parent_parser])
+    interested_subparser.add_argument('--incoming_tps',
+                                type=int,
+                                help='the throughput of incoming transactions')
+    
+
     delete_subparser = subparsers.add_parser('delete',
                                           help='delete a registered project',
                                           parents=[parent_parser])
@@ -258,6 +271,45 @@ def read_from_file(args):
         function_dispatcher(line_args)
     command_file.close()
 
+def auto_run():
+    micro_conversion = 1000000
+    time_interval = 1.0 / 10 * micro_conversion
+    print("interval is:" + str(time_interval))
+    processes = []
+    x = 1
+    args_list = ["register","--feasibility true --ethicality true --approved_time 03.11.2022 --validity_duration 03.12.2022 --legal_base 1 --DS_selection_criteria GREEN --project_issuer salar1"]
+    while True:
+        start_time = datetime.datetime.now()
+        proj_id = []
+        for i in range(0,10):
+            proj_id.append(str(random.randint(0, 9)))
+        arg = args_list[0] + " " + "PR" + ''.join(proj_id) + " " + args_list[1]
+        line_args = arg.split()
+        parser = create_parser(os.path.basename(sys.argv[0]))
+        line_args = parser.parse_args(line_args)
+
+        #function_dispatcher(line_args)
+        processes.append(Process(target=function_dispatcher, args=(line_args,)))
+        processes[-1].start()
+
+        end_time = datetime.datetime.now()
+        time_difference = end_time - start_time
+        print(time_difference.microseconds)
+        if(time_interval < time_difference.microseconds):
+            while True:
+                print("Incoming Throughput could not be reached!")
+                print(x)
+            break
+        print("time differene is (microSecs):")
+        print(time_interval - time_difference.microseconds)
+
+        print(x)
+        x = x+1
+
+        time.sleep((time_interval - time_difference.microseconds)/micro_conversion)
+
+    
+
 def function_dispatcher(args):
     if args.command == 'register':
         do_register(args)
@@ -273,6 +325,8 @@ def function_dispatcher(args):
         do_delete(args)        
     elif args.command == 'list':
         do_list()
+    elif args.command == 'auto_run':
+        auto_run()
     elif args.command == 'file':
         read_from_file(args)                   	
     else:
@@ -300,3 +354,4 @@ def main(prog_name=os.path.basename(sys.argv[0]), args=None):
 
 if __name__ == '__main__':
     main()
+
