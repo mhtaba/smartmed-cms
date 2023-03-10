@@ -192,7 +192,7 @@ def do_register(args):
     response = client.register(args.projectID, args.feasibility, args.ethicality, args.approved_time, args.validity_duration,
     args.legal_base, args.DS_selection_criteria, args.project_issuer)
     print("Find Response: {}".format(response))
-    out_throughput()
+#    out_throughput()
 
 def do_request(args):
     '''Subcommand to request a project based on projectID. Calls client class to do the requesting.'''

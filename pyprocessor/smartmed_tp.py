@@ -56,6 +56,16 @@ def _get_smartmed_address(from_key,projID):
     return _hash(FAMILY_NAME.encode('utf-8'))[0:6] + \
                  _hash(projID.encode('utf-8'))[0:64]
 
+def _get_DS_address(from_key,projID,dsID):
+    '''
+    Return the address of a project's consent object from the smartmed TF.
+
+    The address is the first 6 hex characters from the hash SHA-512(TF name),
+    plus the result of the hash SHA-512(smartmed public key).
+    '''
+    return _hash(FAMILY_NAME.encode('utf-8'))[0:6] + \
+                 _hash(projID.encode('utf-8'))[0:32] + \
+                    _hash(dsID.encode('utf-8'))[0:32]                 
 
 class smartmedTransactionHandler(TransactionHandler):
     '''
@@ -245,6 +255,10 @@ class smartmedTransactionHandler(TransactionHandler):
             if ds.find(username) != -1:
                 DS_found = True
                 DSs[count] = {username:consent}
+#                DS_address = _get_DS_address(from_key,projectID,username)
+#                consent_result = projectID, username, consent
+#                state_data = str(consent_result).encode('utf-8')
+#                context.set_state({DS_address: state_data)
         if DS_found == False:
             raise InternalError("Username Error")    
         reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
