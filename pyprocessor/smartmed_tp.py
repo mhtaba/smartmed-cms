@@ -259,6 +259,7 @@ class smartmedTransactionHandler(TransactionHandler):
                 consent_result = projectID, username, consent
                 state_data = str(consent_result).encode('utf-8')
                 context.set_state({DS_address: state_data})
+                LOGGER.info('reply tp add: ', DS_address)
         if DS_found == False:
             raise InternalError("Username Error")    
 #        reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \

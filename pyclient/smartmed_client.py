@@ -234,7 +234,8 @@ class smartmedClient(object):
             address = self._get_address(str(amount))
         elif action == "reply":
             raw_payload = ",".join([action, amount, qid, status])
-            address = self._get_DS_address(amount, qid)        
+            address = self._get_DS_address(amount, qid)
+            print('reply cl add: ', address)        
         elif action == "find":
             raw_payload = ",".join([action, amount, str(qid)])
             address = self._get_address(str(qid))
