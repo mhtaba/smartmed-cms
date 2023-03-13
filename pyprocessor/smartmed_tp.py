@@ -254,20 +254,20 @@ class smartmedTransactionHandler(TransactionHandler):
             count = count + 1
             if ds.find(username) != -1:
                 DS_found = True
-                DSs[count] = {username:consent}
-#                DS_address = _get_DS_address(from_key,projectID,username)
-#                consent_result = projectID, username, consent
-#                state_data = str(consent_result).encode('utf-8')
-#                context.set_state({DS_address: state_data)
+#                DSs[count] = {username:consent}
+                DS_address = _get_DS_address(from_key,projectID,username)
+                consent_result = projectID, username, consent
+                state_data = str(consent_result).encode('utf-8')
+                context.set_state({DS_address: state_data})
         if DS_found == False:
             raise InternalError("Username Error")    
-        reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
-                DS_selection_criteria,project_issuer,HD_transfer_proof,DSs
-        state_data = str(reply_result).encode('utf-8')
-        addresses = context.set_state({query_address: state_data})
+#        reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
+#                DS_selection_criteria,project_issuer,HD_transfer_proof,DSs
+#        state_data = str(reply_result).encode('utf-8')
+#        addresses = context.set_state({query_address: state_data})
 
-        if len(addresses) < 1:
-            raise InternalError("State Error")
+        # if len(addresses) < 1:
+        #     raise InternalError("State Error")
 
     @classmethod
     def _make_find(cls, context, amount, qid, from_key):

@@ -83,10 +83,15 @@ class smartmedClient(object):
     def _get_prefix(self):
         return _hash(FAMILY_NAME.encode('utf-8'))[0:6]
 
+    def _get_DS_address(self, id, ds):
+        return self._get_prefix() + \
+            _hash(id.encode('utf-8'))[0:32] + \
+                _hash(ds.encode('utf-8'))[0:32]
+
         # Address is 6-char TF prefix + hash of userid + hash of psid    
     def _get_address(self, id):
         return self._get_prefix() + \
-            _hash(id.encode('utf-8'))[0:64]    
+            _hash(id.encode('utf-8'))[0:64] 
 
     # For each CLI command, add a method to:
     # 1. Do any additional handling, if required
@@ -142,7 +147,23 @@ class smartmedClient(object):
             ]
 
         except BaseException:
-            return None    
+            return None
+
+    def showDS(self, projectID, ds):
+        addr_ds = self._get_DS_address(projectID, ds)
+
+        result = self._send_to_rest_api(
+            "state?address={}".format(addr_ds))
+
+        try:
+            encoded_entries = yaml.safe_load(result)["data"]
+
+            return [
+                base64.b64decode(entry["data"]) for entry in encoded_entries
+            ]
+
+        except BaseException:
+            return None             
 
     def _send_to_rest_api(self, suffix, data=None, content_type=None):
         '''Send a REST command to the Validator via the REST API.
