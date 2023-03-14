@@ -259,7 +259,7 @@ class smartmedClient(object):
             family_name=FAMILY_NAME,
             family_version="1.0",
             inputs=[address_input],
-            outputs=[address_output],
+            outputs=[address_input,address_output],
             dependencies=[],
             payload_sha512=_hash(payload),
             batcher_public_key=self._public_key,
