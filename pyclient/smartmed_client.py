@@ -118,7 +118,7 @@ class smartmedClient(object):
 
     def delete(self, projectID):
         '''delete a registered query.'''
-        return self._wrap_and_send("delete", None, projectID, None, None, None, None, None, None, wait=10)
+        return self._wrap_and_send("delete", projectID, None , None, None, None, None, None, None, wait=10)
 
     def get_query(self, qid):
         '''Get a query registered in the ledger by its ID'''
@@ -228,14 +228,16 @@ class smartmedClient(object):
         # Generate a CSV UTF-8 encoded string as the payload.
         if action == "register":
             raw_payload = ",".join([action, amount, qid, status, ds1, ds2, ds3, ds4, ds5])
-            address = self._get_address(amount)
+            address_input = self._get_address(amount)
+            address_output = address_input
         elif action == "request":
             raw_payload = ",".join([action, amount, qid])
-            address = self._get_address(str(amount))
+            address_input = self._get_address(amount)
+            address_output = address_input
         elif action == "reply":
             raw_payload = ",".join([action, amount, qid, status])
-            address = self._get_DS_address(amount, qid)
-            print('reply cl add: ', address)        
+            address_input = self._get_address(amount)
+            address_output = self._get_DS_address(amount, qid)
         elif action == "find":
             raw_payload = ",".join([action, amount, str(qid)])
             address = self._get_address(str(qid))
@@ -243,8 +245,9 @@ class smartmedClient(object):
             raw_payload = ",".join([action, amount, str(qid), status, ds1, ds2, ds3, ds4, ds5])
             address = self._get_address(str(qid))
         elif action == "delete":    
-            raw_payload = ",".join([action, str(qid)])
-            address = self._get_address(str(qid))           
+            raw_payload = ",".join([action, amount])
+            address_input = self._get_address(amount)
+            address_output = address_input           
         payload = raw_payload.encode() # Convert Unicode to bytes
 
         # Construct the address where we'll store our state.
@@ -255,8 +258,8 @@ class smartmedClient(object):
             signer_public_key=self._public_key,
             family_name=FAMILY_NAME,
             family_version="1.0",
-            inputs=[address],
-            outputs=[address],
+            inputs=[address_input],
+            outputs=[address_output],
             dependencies=[],
             payload_sha512=_hash(payload),
             batcher_public_key=self._public_key,

@@ -242,12 +242,12 @@ class smartmedTransactionHandler(TransactionHandler):
     def _make_reply(cls, context, projectID, username, consent, from_key):
         '''replying to consent.'''
         query_address = _get_smartmed_address(from_key,projectID)
-        LOGGER.info('Got the key %s and the query address %s.',
-                    from_key, query_address)
+        LOGGER.info('Got the query address %s.', query_address)
         state_entries = context.get_state([query_address])
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
         DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
              = state_entries[0].data.decode().split(',')
+        LOGGER.info("Reply from = %s.", username)         
         DS_found = False
         count = -1
         for ds in DSs:
@@ -256,10 +256,10 @@ class smartmedTransactionHandler(TransactionHandler):
                 DS_found = True
 #                DSs[count] = {username:consent}
                 DS_address = _get_DS_address(from_key,projectID,username)
+                LOGGER.info('Got the DS address %s.', DS_address)
                 consent_result = projectID, username, consent
                 state_data = str(consent_result).encode('utf-8')
                 context.set_state({DS_address: state_data})
-                LOGGER.info('reply tp add: ', DS_address)
         if DS_found == False:
             raise InternalError("Username Error")    
 #        reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
