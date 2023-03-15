@@ -135,7 +135,7 @@ class smartmedClient(object):
         return self._wrap_and_send("interested", username, qid, status, ds1, ds2, ds3, ds4, ds5, wait=10)    
 
     def list(self):
-        addr_prefix = self._get_prefix()
+        addr_prefix = self._get_prefix_all()
 
         result = self._send_to_rest_api(
             "state?address={}".format(addr_prefix))
