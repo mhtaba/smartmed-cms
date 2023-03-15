@@ -54,8 +54,7 @@ def _get_smartmed_address(from_key,projID):
     plus the result of the hash SHA-512(smartmed public key).
     '''
     return _hash(FAMILY_NAME.encode('utf-8'))[0:6] + \
-                 _hash(projID.encode('utf-8'))[0:32] + \
-                    _hash('registery'.encode('utf-8'))[0:32] 
+                 _hash(projID.encode('utf-8'))[0:64] 
 
 def _get_DS_address(from_key,projID,dsID):
     '''
@@ -245,7 +244,7 @@ class smartmedTransactionHandler(TransactionHandler):
         query_address = _get_smartmed_address(from_key,projectID)
         LOGGER.info('Got the query address %s.', query_address)
         state_entries = context.get_state([query_address])
-        projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
+        projID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
         DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
              = state_entries[0].data.decode().split(',')
         LOGGER.info("Reply from = %s. for project = %s", username, projectID)         

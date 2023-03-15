@@ -91,9 +91,7 @@ class smartmedClient(object):
         # Address is 6-char TF prefix + hash of userid + hash of psid    
     def _get_address(self, id):
         return self._get_prefix() + \
-            _hash(id.encode('utf-8'))[0:32] + \
-                _hash('registery'.encode('utf-8'))[0:32]
-
+            _hash(id.encode('utf-8'))[0:64] 
     # For each CLI command, add a method to:
     # 1. Do any additional handling, if required
     # 2. Create a transaction and a batch
@@ -238,9 +236,7 @@ class smartmedClient(object):
         elif action == "reply":
             raw_payload = ",".join([action, amount, qid, status])
             address_input = self._get_address(amount)
-         #   address_output = self._get_DS_address(amount, qid)
-            address_output = '47b9513ffe5cde9c9aed4d22e6f78561a340379aabd5a79a9292701366d8bddf4396d0'
-           # print(address_output)
+            address_output = self._get_DS_address(amount, qid)
         elif action == "find":
             raw_payload = ",".join([action, amount, str(qid)])
             address = self._get_address(str(qid))
