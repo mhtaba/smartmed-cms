@@ -63,9 +63,9 @@ def _get_DS_address(from_key,projID,dsID):
     The address is the first 6 hex characters from the hash SHA-512(TF name),
     plus the result of the hash SHA-512(smartmed public key).
     '''
+    mergeID = projID + dsID
     return _hash(FAMILY_NAME.encode('utf-8'))[0:6] + \
-                 _hash(projID.encode('utf-8'))[0:32] + \
-                    _hash(dsID.encode('utf-8'))[0:32]                 
+                 _hash(mergeID.encode('utf-8'))[0:64]                 
 
 class smartmedTransactionHandler(TransactionHandler):
     '''

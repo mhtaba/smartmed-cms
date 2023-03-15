@@ -84,9 +84,9 @@ class smartmedClient(object):
         return _hash(FAMILY_NAME.encode('utf-8'))[0:6]
 
     def _get_DS_address(self, id, ds):
+        mergeID = id + ds
         return self._get_prefix() + \
-            _hash(id.encode('utf-8'))[0:32] + \
-                _hash(ds.encode('utf-8'))[0:32]
+            _hash(mergeID.encode('utf-8'))[0:64]
 
         # Address is 6-char TF prefix + hash of userid + hash of psid    
     def _get_address(self, id):
