@@ -80,17 +80,19 @@ class smartmedClient(object):
 
         # Address is 6-char TF prefix + hash of "mysmartmed"'s public key
 
-    def _get_prefix(self):
+    def _get_prefix_all(self):
         return _hash(FAMILY_NAME.encode('utf-8'))[0:6]
 
+    def _get_prefix_project(self, projID):
+        return _hash(projID.encode('utf-8'))[0:6]    
+
     def _get_DS_address(self, id, ds):
-        mergeID = id + ds
-        return self._get_prefix() + \
-            _hash(mergeID.encode('utf-8'))[0:64]
+        return self._get_prefix_project(id) + \
+            _hash(ds.encode('utf-8'))[0:64]
 
         # Address is 6-char TF prefix + hash of userid + hash of psid    
     def _get_address(self, id):
-        return self._get_prefix() + \
+        return self._get_prefix_all() + \
             _hash(id.encode('utf-8'))[0:64] 
     # For each CLI command, add a method to:
     # 1. Do any additional handling, if required
