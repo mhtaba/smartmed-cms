@@ -258,7 +258,7 @@ class smartmedClient(object):
             signer_public_key=self._public_key,
             family_name=FAMILY_NAME,
             family_version="1.0",
-            inputs=[address_input],
+            inputs=[address_input,address_output],
             outputs=[address_input,address_output],
             dependencies=[],
             payload_sha512=_hash(payload),
