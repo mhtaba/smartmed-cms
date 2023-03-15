@@ -54,7 +54,8 @@ def _get_smartmed_address(from_key,projID):
     plus the result of the hash SHA-512(smartmed public key).
     '''
     return _hash(FAMILY_NAME.encode('utf-8'))[0:6] + \
-                 _hash(projID.encode('utf-8'))[0:64]
+                 _hash(projID.encode('utf-8'))[0:32] + \
+                    _hash('registery'.encode('utf-8'))[0:32] 
 
 def _get_DS_address(from_key,projID,dsID):
     '''

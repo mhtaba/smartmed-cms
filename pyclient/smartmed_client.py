@@ -91,7 +91,8 @@ class smartmedClient(object):
         # Address is 6-char TF prefix + hash of userid + hash of psid    
     def _get_address(self, id):
         return self._get_prefix() + \
-            _hash(id.encode('utf-8'))[0:64] 
+            _hash(id.encode('utf-8'))[0:32] + \
+                _hash('registery'.encode('utf-8'))[0:32]
 
     # For each CLI command, add a method to:
     # 1. Do any additional handling, if required
