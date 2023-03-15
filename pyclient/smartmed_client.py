@@ -164,7 +164,23 @@ class smartmedClient(object):
             ]
 
         except BaseException:
-            return None             
+            return None  
+
+    def showPR(self, projectID):
+        addr_ds = self._get_prefix_project(projectID)
+
+        result = self._send_to_rest_api(
+            "state?address={}".format(addr_ds))
+
+        try:
+            encoded_entries = yaml.safe_load(result)["data"]
+
+            return [
+                base64.b64decode(entry["data"]) for entry in encoded_entries
+            ]
+
+        except BaseException:
+            return None                    
 
     def _send_to_rest_api(self, suffix, data=None, content_type=None):
         '''Send a REST command to the Validator via the REST API.

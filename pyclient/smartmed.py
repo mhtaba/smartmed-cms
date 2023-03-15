@@ -154,7 +154,14 @@ def create_parser(prog_name):
 
     showDS_subparser.add_argument('DS',
                                 type=str,
-                                help='the ds has such a template: DS12345678') 
+                                help='the ds has such a template: DS12345678')
+
+    showPR_subparser = subparsers.add_parser('showPR',
+                                           help='display the consent status of a given project',
+                                           parents=[parent_parser])
+    showPR_subparser.add_argument('projectID',
+                                type=str,
+                                help='the project ID has such a template: PR12345678')                                                                   
 
     interested_subparser = subparsers.add_parser('interested',
                                            help='The DS shows its interest to the query',
@@ -284,7 +291,25 @@ def do_showDS(args):
                 "| DS:"+ DS, \
                 "| Consent reply:"+ consent_reply)
     else:
-        raise Exception("Transaction data not found")                     
+        raise Exception("Transaction data not found")
+
+def do_showPR(args):
+    '''Subcommand to show the consent status of the given project. Calls client class to do the showing.'''
+    privkeyfile = _get_private_keyfile(KEY_NAME)
+    client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
+    query_list = [
+        tx.split(',')
+        for txs in client.showPR(args.projectID)
+        for tx in txs.decode().split('|')
+    ]
+    if query_list is not None:
+        for tx_data in query_list:
+            projectID, DS, consent_reply = tx_data
+            print("Project ID:"+ projectID, \
+                "| DS:"+ DS, \
+                "| Consent reply:"+ consent_reply)
+    else:
+        raise Exception("Transaction data not found")                              
 
 def do_delete(args):
     '''Subcommand to delete a query.  Calls client class to do the deleting.'''
@@ -369,7 +394,9 @@ def function_dispatcher(args):
     elif args.command == 'list':
         do_list()
     elif args.command == 'showDS':
-        do_showDS(args)    
+        do_showDS(args)
+    elif args.command == 'showPR':
+        do_showPR(args)        
     elif args.command == 'auto_run':
         auto_run()
     elif args.command == 'file':
