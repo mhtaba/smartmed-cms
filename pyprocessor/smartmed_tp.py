@@ -248,7 +248,7 @@ class smartmedTransactionHandler(TransactionHandler):
         projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
         DS_selection_criteria,project_issuer,HD_transfer_proof,*DSs \
              = state_entries[0].data.decode().split(',')
-        LOGGER.info("Reply from = %s.", username)         
+        LOGGER.info("Reply from = %s. for project = %s", username, projectID)         
         DS_found = False
         count = -1
         for ds in DSs:
