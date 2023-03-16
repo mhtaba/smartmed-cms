@@ -63,11 +63,8 @@ def _get_DS_address(self,from_key,projID,dsID):
     The address is the first 6 hex characters from the hash SHA-512(TF name),
     plus the result of the hash SHA-512(smartmed public key).
     '''
-    return self._get_prefix_project(projID) + \
-                 _hash(dsID.encode('utf-8'))[0:64]
-
-def _get_prefix_project(self, projID):
-        return _hash(projID.encode('utf-8'))[0:6]                                   
+    return _hash(projID.encode('utf-8'))[0:6] + \
+                 _hash(dsID.encode('utf-8'))[0:64]                                  
 
 class smartmedTransactionHandler(TransactionHandler):
     '''
@@ -339,7 +336,7 @@ class smartmedTransactionHandler(TransactionHandler):
         context.delete_state([query_address])
 
     def _make_deleteDS(cls, context, projectID, dsID, from_key):
-        projds_address = _get_DS_address(from_key, projectID, dsID)
+        projds_address = _get_DS_address(from_key, projID, dsID)
         LOGGER.info('Got the project-ds address %s.', projds_address)
         context.delete_state([projds_address])   
 
