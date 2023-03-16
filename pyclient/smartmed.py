@@ -191,7 +191,7 @@ def create_parser(prog_name):
                                type=str,
                                help='Project ID of the one that is going to be deleted')
 
-    deleteDSs_subparser = subparsers.add_parser('deleteDS',
+    deleteDSs_subparser = subparsers.add_parser('deleteDSs',
                                           help='delete all the registered consents for a project',
                                           parents=[parent_parser])
     deleteDSs_subparser.add_argument('projectID',
@@ -409,7 +409,7 @@ def function_dispatcher(args):
         do_interested(args)
     elif args.command == 'delete':
         do_delete(args)
-    elif args.command == 'deleteDS':
+    elif args.command == 'deleteDSs':
         do_deleteDSs(args)            
     elif args.command == 'list':
         do_list()
