@@ -118,12 +118,12 @@ class smartmedClient(object):
         return self._wrap_and_send("find", color, qid, None, None, None, None, None, None, wait=10)
 
     def delete(self, projectID):
-        '''delete a registered query.'''
+        '''delete a registered project.'''
         return self._wrap_and_send("delete", projectID, None , None, None, None, None, None, None, wait=10)
 
-    def deleteDSs(self, projectID):
-        '''delete all the registered consents for a project.'''
-        return self._wrap_and_send("deleteDSs", projectID, None , None, None, None, None, None, None, wait=10)
+    def deleteDS(self, projectID, ds):
+        '''delete a registered consent for a project.'''
+        return self._wrap_and_send("deleteDS", projectID, ds , None, None, None, None, None, None, wait=10)
 
 
     def get_query(self, qid):
@@ -270,9 +270,9 @@ class smartmedClient(object):
             raw_payload = ",".join([action, amount])
             address_input = self._get_address(amount)
             address_output = address_input
-        elif action == "deleteDSs":    
-            raw_payload = ",".join([action, amount])
-            address_input = self._get_prefix_project(amount)
+        elif action == "deleteDS":    
+            raw_payload = ",".join([action, amount, qid])
+            address_input = self._get_DS_address(amount, qid)
             address_output = address_input                
         payload = raw_payload.encode() # Convert Unicode to bytes
 

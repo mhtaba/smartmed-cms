@@ -141,9 +141,9 @@ class smartmedTransactionHandler(TransactionHandler):
             ds5 = payload_list[8]
         elif action == "delete":
             projectID = payload_list[1]
-        elif action == "deleteDSs":
+        elif action == "deleteDS":
             projectID = payload_list[1]
-#            dsID = payload_list[2]     
+            dsID = payload_list[2]     
 
         # Get the signer's public key, sent in the header from the client.
         from_key = header.signer_public_key
@@ -186,12 +186,12 @@ class smartmedTransactionHandler(TransactionHandler):
         elif action == "delete":
             LOGGER.info("Query ID = %s.", projectID)
             self._make_delete(context, projectID, from_key)
-        elif action == "deleteDSs":
+        elif action == "deleteDS":
             LOGGER.info("Project ID = %s.", projectID)
-            #LOGGER.info("DS ID = %s.", dsID)
-            self._make_deleteDSs(context, projectID, from_key)    
+            LOGGER.info("DS ID = %s.", dsID)
+            self._make_deleteDS(context, projectID, dsID, from_key)    
         else:
-            LOGGER.info("Unhandled action. Action should be register or request or reply or delete or deleteDSs")
+            LOGGER.info("Unhandled action. Action should be register or request or reply or delete or deleteDS")
 
     @classmethod
     def _make_register(cls, context, projectID, feasibility, ethicality, approved_time, validity_duration,
@@ -338,10 +338,10 @@ class smartmedTransactionHandler(TransactionHandler):
                     from_key, query_address)
         context.delete_state([query_address])
 
-    def _make_deleteDSs(cls, context, projectID, from_key):
-        proj_address = _get_prefix_project(from_key, projectID)
-        LOGGER.info('Got the project address %s.', proj_address)
-        context.delete_state([proj_address])   
+    def _make_deleteDS(cls, context, projectID, dsID, from_key):
+        projds_address = _get_DS_address(from_key, projectID, dsID)
+        LOGGER.info('Got the project-ds address %s.', projds_address)
+        context.delete_state([projds_address])   
 
 def main():
     '''Entry-point function for the smartmed Transaction Processor.'''
