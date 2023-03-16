@@ -138,6 +138,8 @@ class smartmedTransactionHandler(TransactionHandler):
             ds5 = payload_list[8]
         elif action == "delete":
             projectID = payload_list[1]
+        elif action == "deleteDS":
+            projectID = payload_list[1]    
 
         # Get the signer's public key, sent in the header from the client.
         from_key = header.signer_public_key
@@ -180,6 +182,9 @@ class smartmedTransactionHandler(TransactionHandler):
         elif action == "delete":
             LOGGER.info("Query ID = %s.", projectID)
             self._make_delete(context, projectID, from_key)
+        elif action == "deleteDS":
+            LOGGER.info("Query ID = %s.", projectID)
+            self._make_delete(context, projectID, from_key)    
         else:
             LOGGER.info("Unhandled action. Action should be bake or eat")
 
@@ -334,7 +339,12 @@ class smartmedTransactionHandler(TransactionHandler):
         query_address = _get_smartmed_address(from_key,projectID)
         LOGGER.info('Got the key %s and the query address %s.',
                     from_key, query_address)
-        context.delete_state([query_address])    
+        context.delete_state([query_address])
+
+    def _make_deleteDS(cls, context, projectID, from_key):
+        proj_address = _hash(projectID.encode('utf-8'))[0:6]
+        LOGGER.info('Got the project address %s.', proj_address)
+        context.delete_state([proj_address])   
 
 def main():
     '''Entry-point function for the smartmed Transaction Processor.'''

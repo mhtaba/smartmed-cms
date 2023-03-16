@@ -190,6 +190,14 @@ def create_parser(prog_name):
     delete_subparser.add_argument('projectID',
                                type=str,
                                help='Project ID of the one that is going to be deleted')
+
+    deleteDS_subparser = subparsers.add_parser('deleteDS',
+                                          help='delete all the registered consents for a project',
+                                          parents=[parent_parser])
+    deleteDS_subparser.add_argument('projectID',
+                               type=str,
+                               help='Project ID of the one that is going to be deleted')
+
     file_subparser = subparsers.add_parser('file',help='Swithching to the file execution mode', parents=[parent_parser])
     file_subparser.add_argument('filepath',
                                type=str,
@@ -318,6 +326,13 @@ def do_delete(args):
     response = client.delete(args.projectID)
     print("delete Response: {}".format(response))
 
+def do_deleteDS(args):
+    '''Subcommand to delete all DSs for a project query. Calls client class to do the deleting.'''
+    privkeyfile = _get_private_keyfile(KEY_NAME)
+    client = smartmedClient(base_url=DEFAULT_URL, key_file=privkeyfile)
+    response = client.deleteDS(args.projectID)
+    print("delete Response: {}".format(response))
+
 def read_from_file(args):
     command_file = open(args.filepath, 'r')
     while True:
@@ -390,7 +405,9 @@ def function_dispatcher(args):
     elif args.command == 'interested':
         do_interested(args)
     elif args.command == 'delete':
-        do_delete(args)        
+        do_delete(args)
+    elif args.command == 'deleteDS':
+        do_deleteDS(args)            
     elif args.command == 'list':
         do_list()
     elif args.command == 'showDS':

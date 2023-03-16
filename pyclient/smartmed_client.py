@@ -121,6 +121,11 @@ class smartmedClient(object):
         '''delete a registered query.'''
         return self._wrap_and_send("delete", projectID, None , None, None, None, None, None, None, wait=10)
 
+    def deleteDS(self, projectID):
+        '''delete all the registered consents for a project.'''
+        return self._wrap_and_send("deleteDS", projectID, None , None, None, None, None, None, None, wait=10)
+
+
     def get_query(self, qid):
         '''Get a query registered in the ledger by its ID'''
         address = self._get_address(str(qid))
@@ -264,7 +269,11 @@ class smartmedClient(object):
         elif action == "delete":    
             raw_payload = ",".join([action, amount])
             address_input = self._get_address(amount)
-            address_output = address_input           
+            address_output = address_input
+        elif action == "deleteDS":    
+            raw_payload = ",".join([action, amount])
+            address_input = self._get_prefix_project(amount)
+            address_output = address_input                
         payload = raw_payload.encode() # Convert Unicode to bytes
 
         # Construct the address where we'll store our state.
