@@ -186,12 +186,12 @@ class smartmedTransactionHandler(TransactionHandler):
         elif action == "delete":
             LOGGER.info("Query ID = %s.", projectID)
             self._make_delete(context, projectID, from_key)
-        elif action == "deleteDS":
+        elif action == "deleteDSs":
             LOGGER.info("Project ID = %s.", projectID)
             #LOGGER.info("DS ID = %s.", dsID)
             self._make_deleteDSs(context, projectID, from_key)    
         else:
-            LOGGER.info("Unhandled action. Action should be bake or eat")
+            LOGGER.info("Unhandled action. Action should be register or request or reply or delete or deleteDSs")
 
     @classmethod
     def _make_register(cls, context, projectID, feasibility, ethicality, approved_time, validity_duration,
