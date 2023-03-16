@@ -56,7 +56,7 @@ def _get_smartmed_address(from_key,projID):
     return _hash(FAMILY_NAME.encode('utf-8'))[0:6] + \
                  _hash(projID.encode('utf-8'))[0:64] 
 
-def _get_DS_address(self,from_key,projID,dsID):
+def _get_DS_address(from_key,projID,dsID):
     '''
     Return the address of a project's consent object from the smartmed TF.
 
@@ -336,7 +336,7 @@ class smartmedTransactionHandler(TransactionHandler):
         context.delete_state([query_address])
 
     def _make_deleteDS(cls, context, projectID, dsID, from_key):
-        projds_address = _get_DS_address(from_key, projID, dsID)
+        projds_address = _get_DS_address(from_key, projectID, dsID)
         LOGGER.info('Got the project-ds address %s.', projds_address)
         context.delete_state([projds_address])   
 
