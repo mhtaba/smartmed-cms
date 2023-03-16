@@ -56,15 +56,18 @@ def _get_smartmed_address(from_key,projID):
     return _hash(FAMILY_NAME.encode('utf-8'))[0:6] + \
                  _hash(projID.encode('utf-8'))[0:64] 
 
-def _get_DS_address(from_key,projID,dsID):
+def _get_DS_address(self,from_key,projID,dsID):
     '''
     Return the address of a project's consent object from the smartmed TF.
 
     The address is the first 6 hex characters from the hash SHA-512(TF name),
     plus the result of the hash SHA-512(smartmed public key).
     '''
-    return _hash(projID.encode('utf-8'))[0:6] + \
-                 _hash(dsID.encode('utf-8'))[0:64]                 
+    return self._get_prefix_project(projID) + \
+                 _hash(dsID.encode('utf-8'))[0:64]
+
+def _get_prefix_project(self, projID):
+        return _hash(projID.encode('utf-8'))[0:6]                                   
 
 class smartmedTransactionHandler(TransactionHandler):
     '''
@@ -138,8 +141,9 @@ class smartmedTransactionHandler(TransactionHandler):
             ds5 = payload_list[8]
         elif action == "delete":
             projectID = payload_list[1]
-        elif action == "deleteDS":
-            projectID = payload_list[1]    
+        elif action == "deleteDSs":
+            projectID = payload_list[1]
+#            dsID = payload_list[2]     
 
         # Get the signer's public key, sent in the header from the client.
         from_key = header.signer_public_key
@@ -183,8 +187,9 @@ class smartmedTransactionHandler(TransactionHandler):
             LOGGER.info("Query ID = %s.", projectID)
             self._make_delete(context, projectID, from_key)
         elif action == "deleteDS":
-            LOGGER.info("Query ID = %s.", projectID)
-            self._make_delete(context, projectID, from_key)    
+            LOGGER.info("Project ID = %s.", projectID)
+            #LOGGER.info("DS ID = %s.", dsID)
+            self._make_deleteDSs(context, projectID, from_key)    
         else:
             LOGGER.info("Unhandled action. Action should be bake or eat")
 
@@ -258,7 +263,6 @@ class smartmedTransactionHandler(TransactionHandler):
             count = count + 1
             if ds.find(username) != -1:
                 DS_found = True
-#                DSs[count] = {username:consent}
                 DS_address = _get_DS_address(from_key,projectID,username)
                 LOGGER.info('Got the DS address %s.', DS_address)
                 consent_result = projectID, username, consent
@@ -266,13 +270,6 @@ class smartmedTransactionHandler(TransactionHandler):
                 context.set_state({DS_address: state_data})
         if DS_found == False:
             raise InternalError("Username Error")    
-#        reply_result = projectID,feasibility,ethicality,approved_time,validity_duration,legal_base, \
-#                DS_selection_criteria,project_issuer,HD_transfer_proof,DSs
-#        state_data = str(reply_result).encode('utf-8')
-#        addresses = context.set_state({query_address: state_data})
-
-        # if len(addresses) < 1:
-        #     raise InternalError("State Error")
 
     @classmethod
     def _make_find(cls, context, amount, qid, from_key):
@@ -341,8 +338,8 @@ class smartmedTransactionHandler(TransactionHandler):
                     from_key, query_address)
         context.delete_state([query_address])
 
-    def _make_deleteDS(cls, context, projectID, from_key):
-        proj_address = _hash(projectID.encode('utf-8'))[0:6]
+    def _make_deleteDSs(cls, context, projectID, from_key):
+        proj_address = _get_prefix_project(from_key, projectID)
         LOGGER.info('Got the project address %s.', proj_address)
         context.delete_state([proj_address])   
 

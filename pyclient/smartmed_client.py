@@ -121,9 +121,9 @@ class smartmedClient(object):
         '''delete a registered query.'''
         return self._wrap_and_send("delete", projectID, None , None, None, None, None, None, None, wait=10)
 
-    def deleteDS(self, projectID):
+    def deleteDSs(self, projectID):
         '''delete all the registered consents for a project.'''
-        return self._wrap_and_send("deleteDS", projectID, None , None, None, None, None, None, None, wait=10)
+        return self._wrap_and_send("deleteDSs", projectID, None , None, None, None, None, None, None, wait=10)
 
 
     def get_query(self, qid):
@@ -270,7 +270,7 @@ class smartmedClient(object):
             raw_payload = ",".join([action, amount])
             address_input = self._get_address(amount)
             address_output = address_input
-        elif action == "deleteDS":    
+        elif action == "deleteDSs":    
             raw_payload = ",".join([action, amount])
             address_input = self._get_prefix_project(amount)
             address_output = address_input                
