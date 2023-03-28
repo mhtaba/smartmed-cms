@@ -351,17 +351,18 @@ def read_from_file(args):
 
 def auto_run():
     micro_conversion = 1000000
-    time_interval = 1.0 / 10 * micro_conversion
+    time_interval = 1.0 / 20 * micro_conversion
     print("interval is:" + str(time_interval))
     processes = []
     x = 1
-    args_list = ["register","--feasibility true --ethicality true --approved_time 03.11.2022 --validity_duration 03.12.2022 --legal_base 1 --DS_selection_criteria GREEN --project_issuer salar1"]
-    while True:
+    # args_list = ["register","--feasibility true --ethicality true --approved_time 03.11.2022 --validity_duration 03.12.2022 --legal_base 1 --DS_selection_criteria GREEN --project_issuer salar1"]
+    args_list = ["reply PR11111112 --username DS", " yes"]
+    while x < 10000:
         start_time = datetime.datetime.now()
         proj_id = []
         for i in range(0,10):
             proj_id.append(str(random.randint(0, 9)))
-        arg = args_list[0] + " " + "PR" + ''.join(proj_id) + " " + args_list[1]
+        arg = args_list[0] + format(x, '08d') + " " + args_list[1]
         line_args = arg.split()
         parser = create_parser(os.path.basename(sys.argv[0]))
         line_args = parser.parse_args(line_args)
@@ -383,6 +384,8 @@ def auto_run():
 
         print(x)
         x = x+1
+
+
 
         time.sleep((time_interval - time_difference.microseconds)/micro_conversion)
 
@@ -446,4 +449,5 @@ def main(prog_name=os.path.basename(sys.argv[0]), args=None):
 
 if __name__ == '__main__':
     main()
+
 
